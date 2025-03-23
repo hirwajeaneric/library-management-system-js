@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { BookModel } from '../models/bookModel';
 import { body } from 'express-validator';
 import { validate } from '../middleware/validationMiddleware';
@@ -18,14 +18,15 @@ export class BookController {
     body('totalCopies').isInt({ min: 1 }).withMessage('Total copies must be positive')
   ];
 
-  async addBook(req: Request, res: Response) {
+  addBook = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { title, author, isbn, totalCopies } = req.body;
     try {
       const book = await this.bookModel.createBook(title, author, isbn, totalCopies);
       logger.info(`Book added: ${title}`);
-      res.status(201).json(book);
+      res.status(201).json({ ...book, id: Number(book.id) });
     } catch (err) {
-      throw new Error('Failed to add book');
+      logger.error(`Failed to add book: ${err}`);
+      next(new Error('Failed to add book'));
     }
-  }
+  };
 }

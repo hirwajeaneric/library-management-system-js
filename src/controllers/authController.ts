@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { UserModel } from '../models/userModel';
 import { generateToken } from '../utils/jwtUtils';
 import { body } from 'express-validator';
@@ -20,33 +20,36 @@ export class AuthController {
     body('role').isIn(['ADMIN', 'LIBRARIAN', 'USER']).withMessage('Invalid role')
   ];
 
-  async register(req: Request, res: Response, next: NextFunction) {
+  register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { username, password, email, role } = req.body;
     try {
       const user = await this.userModel.createUser(username, password, email, role);
       const token = generateToken(Number(user.id), user.role);
       res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
       logger.info(`User registered: ${username}`);
-      res.status(201).json({ id: user.id, username, role });
+      res.status(201).json({ id: Number(user.id), username, role });
     } catch (err) {
-      throw new Error('Registration failed');
+      logger.error(`Registration failed: ${err}`);
+      next(new Error('Registration failed'));
     }
-  }
+  };
 
-  async login(req: Request, res: Response, next: NextFunction) {
+  login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { username, password } = req.body;
     try {
       const user = await this.userModel.findByUsername(username);
       if (!user || !(await bcrypt.compare(password, user.password))) {
         logger.warn(`Login failed for ${username}`);
-        return res.status(401).json({ message: 'Invalid credentials' });
+        res.status(401).json({ message: 'Invalid credentials' });
+        return;
       }
       const token = generateToken(Number(user.id), user.role);
       res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
       logger.info(`User logged in: ${username}`);
-      res.json({ id: user.id, username, role: user.role });
+      res.json({ id: Number(user.id), username, role: user.role });
     } catch (err) {
-      throw new Error('Login failed');
+      logger.error(`Login failed: ${err}`);
+      next(new Error('Login failed'));
     }
-  }
+  };
 }

@@ -5,9 +5,9 @@ import { AuthMiddleware } from '../middleware/authMiddleware';
 const router = Router();
 const borrowController = new BorrowController();
 
-router.post('/borrow', AuthMiddleware.protect('LIBRARIAN'), borrowController.borrowBook.bind(borrowController));
-router.post('/return/:recordId', AuthMiddleware.protect('LIBRARIAN'), borrowController.returnBook.bind(borrowController));
-router.get('/summary', AuthMiddleware.protect('LIBRARIAN'), borrowController.getBorrowSummary.bind(borrowController));
-router.get('/overdue', AuthMiddleware.protect('LIBRARIAN'), borrowController.getOverdueBooks.bind(borrowController));
+router.post('/borrow', AuthMiddleware.protect('LIBRARIAN'), borrowController.borrowBook);
+router.post('/return/:recordId', AuthMiddleware.protect('LIBRARIAN'), borrowController.returnBook);
+router.get('/summary', AuthMiddleware.protect('LIBRARIAN'), borrowController.getBorrowSummary);
+router.get('/overdue', AuthMiddleware.protect('LIBRARIAN'), borrowController.getOverdueBooks);
 
 export default router;

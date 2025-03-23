@@ -5,6 +5,6 @@ import { AuthMiddleware } from '../middleware/authMiddleware';
 const router = Router();
 const userController = new UserController();
 
-router.get('/history', AuthMiddleware.protect('USER'), userController.getHistory.bind(userController));
+router.get('/history', AuthMiddleware.protect('USER'), userController.getHistory);
 
 export default router;

@@ -1,14 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
+import { RequestHandler } from 'express'; // Import RequestHandler type
 import { verifyToken } from '../utils/jwtUtils';
 import logger from '../config/logger';
 
 export class AuthMiddleware {
-  static protect(role?: string) {
+  static protect(role?: string): RequestHandler {
     return (req: Request, res: Response, next: NextFunction) => {
       const token = req.cookies.token;
       if (!token) {
         logger.warn('No token provided');
-        return res.status(401).json({ message: 'Unauthorized' });
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
       }
 
       try {
@@ -16,12 +18,14 @@ export class AuthMiddleware {
         req.user = decoded;
         if (role && decoded.role !== role) {
           logger.warn(`User role ${decoded.role} not authorized for ${role} route`);
-          return res.status(403).json({ message: 'Forbidden' });
+          res.status(403).json({ message: 'Forbidden' });
+          return;
         }
         next();
       } catch (err) {
         logger.error(`Token verification failed: ${err}`);
-        return res.status(401).json({ message: 'Invalid token' });
+        res.status(401).json({ message: 'Invalid token' });
+        return;
       }
     };
   }

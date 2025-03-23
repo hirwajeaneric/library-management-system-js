@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { UserModel } from '../models/userModel';
 import { generateToken } from '../utils/jwtUtils';
 import { body } from 'express-validator';
@@ -20,7 +20,7 @@ export class AuthController {
     body('role').isIn(['ADMIN', 'LIBRARIAN', 'USER']).withMessage('Invalid role')
   ];
 
-  async register(req: Request, res: Response) {
+  async register(req: Request, res: Response, next: NextFunction) {
     const { username, password, email, role } = req.body;
     try {
       const user = await this.userModel.createUser(username, password, email, role);
@@ -33,7 +33,7 @@ export class AuthController {
     }
   }
 
-  async login(req: Request, res: Response) {
+  async login(req: Request, res: Response, next: NextFunction) {
     const { username, password } = req.body;
     try {
       const user = await this.userModel.findByUsername(username);

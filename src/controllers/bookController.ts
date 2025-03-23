@@ -29,4 +29,27 @@ export class BookController {
       next(new Error('Failed to add book'));
     }
   };
+
+  getAllBooks = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const books = await this.bookModel.prisma.book.findMany();
+      res.json(books.map(book => ({ ...book, id: Number(book.id) })));
+    } catch (err) {
+      next(new Error('Failed to fetch books'));
+    }
+  };
+  
+  getBookById = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    try {
+      const book = await this.bookModel.prisma.book.findUnique({ where: { id: Number(id) } });
+      if (!book) {
+        res.status(404).json({ message: 'Book not found' });
+        return;
+      }
+      res.json({ ...book, id: Number(book.id) });
+    } catch (err) {
+      next(new Error('Failed to fetch book details'));
+    }
+  };
 }

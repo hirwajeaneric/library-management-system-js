@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
 export class BookModel {
-  private prisma: PrismaClient;
+  public prisma: PrismaClient;
 
   constructor() {
     this.prisma = new PrismaClient();

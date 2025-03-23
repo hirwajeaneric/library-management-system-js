@@ -7,5 +7,7 @@ const router = Router();
 const bookController = new BookController();
 
 router.post('/', AuthMiddleware.protect('LIBRARIAN'), BookController.validationRules, validate, bookController.addBook);
+router.get('/', AuthMiddleware.protect('LIBRARIAN'), bookController.getAllBooks);
+router.get('/:id', AuthMiddleware.protect('LIBRARIAN'), bookController.getBookById);
 
 export default router;

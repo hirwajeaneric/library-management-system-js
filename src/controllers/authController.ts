@@ -52,4 +52,16 @@ export class AuthController {
       next(new Error('Login failed'));
     }
   };
+
+  registerLibrarian = async (req: Request, res: Response, next: NextFunction) => {
+    const { username, password, email } = req.body;
+    try {
+      const user = await this.userModel.createUser(username, password, email, 'LIBRARIAN');
+      logger.info(`Librarian registered: ${username}`);
+      res.status(201).json({ id: Number(user.id), username, role: 'LIBRARIAN' });
+    } catch (err) {
+      logger.error(`Librarian registration failed: ${err}`);
+      next(new Error('Librarian registration failed'));
+    }
+  };
 }

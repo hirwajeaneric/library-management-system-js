@@ -1,7 +1,7 @@
 import { PrismaClient, BorrowStatus } from '@prisma/client';
 
 export class BorrowModel {
-  private prisma: PrismaClient;
+  public prisma: PrismaClient;
 
   constructor() {
     this.prisma = new PrismaClient();

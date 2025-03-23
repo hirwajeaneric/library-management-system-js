@@ -196,5 +196,3 @@ Fork, branch, commit, push, PR
 
 3. **Start the App**:
    - Run `npm run dev` and test the endpoints (e.g., login with `admin:password123`, then use the cookie for protected routes).
-
-This starting data provides a functional baseline to test all features, including borrowing limits, overdue tracking, and summary views! Let me know if you need adjustments or additional data.

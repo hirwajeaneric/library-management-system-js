@@ -16,9 +16,9 @@ SELECT
     u.username,
     b.id AS book_id,
     b.title,
-    br.due_date
+    br."dueDate" AS due_date
 FROM "BorrowRecord" br
 JOIN "User" u ON br."userId" = u.id
 JOIN "Book" b ON br."bookId" = b.id
 WHERE br.status = 'BORROWED'
-AND br.due_date < CURRENT_TIMESTAMP;
+AND br."dueDate" < CURRENT_TIMESTAMP;
